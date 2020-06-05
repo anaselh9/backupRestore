@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
             // smsAdapter= new SmsAdapter(this);
             //listView1.setAdapter(contactAdapter);
             //listView2.setAdapter(smsAdapter);
+
         }
 
 
