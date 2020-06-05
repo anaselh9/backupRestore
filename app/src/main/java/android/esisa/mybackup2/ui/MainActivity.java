@@ -32,6 +32,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ListView listView1;
+    private ListView listView2;
 
 
 
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         tabLayout = findViewById(R.id.tabLayout);
         listView1 = findViewById(R.id.listView1);
+        listView2= findViewById(R.id.listView2);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -60,8 +62,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         } else {
             Log.i("cycle", "else :checkSelfPermission");
-            ContactAdapter adapter = new ContactAdapter(this);
-            //listView1.setAdapter(adapter);
+             contactAdapter = new ContactAdapter(this);
+           // listView1.setAdapter(contactAdapter);
+
         }
 
         if(checkSelfPermission(Manifest.permission.READ_SMS)== PackageManager.PERMISSION_DENIED)
@@ -72,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
         }
         else{
             Log.i("cycle","else");
-            smsAdapter = new SmsAdapter(this);
-            //listView.setAdapter(smsAdapter);
+            smsAdapter= new SmsAdapter(this);
+            //listView2.setAdapter(smsAdapter);
         }
 
 
@@ -140,9 +143,10 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.i("cycle", "grantResults[0]");
-            ContactAdapter adapter = new ContactAdapter(this);
-            SmsAdapter adapter1= new SmsAdapter(this);
-            //listView1.setAdapter(adapter);
+            contactAdapter = new ContactAdapter(this);
+            smsAdapter= new SmsAdapter(this);
+           //listView1.setAdapter(contactAdapter);
+          // listView2.setAdapter(smsAdapter);
         }
 
     }
