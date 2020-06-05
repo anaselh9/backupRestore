@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactDao {
-    private List<Contact> data= new ArrayList<>();
+    private ArrayList<Contact> data= new ArrayList<>();
 
-    public List<Contact> getData() {
+    public ArrayList<Contact> getData() {
         return data;
     }
 
-    public void setData(List<Contact> data) {
+    public void setData(ArrayList<Contact> data) {
         this.data = data;
     }
 

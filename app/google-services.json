@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "206133460237",
+    "firebase_url": "https://mybackup2-6200c.firebaseio.com",
+    "project_id": "mybackup2-6200c",
+    "storage_bucket": "mybackup2-6200c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:206133460237:android:a31574e3165f9ba2b38444",
+        "android_client_info": {
+          "package_name": "android.esisa.mybackup2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "206133460237-0ul8jm7s89h2ff5s112jaaf8lfln3v1s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "android.esisa.mybackup2",
+            "certificate_hash": "81f7214844c61e861d65d030cd6d5c7febb58c0a"
+          }
+        },
+        {
+          "client_id": "206133460237-ngfsc8tuiqcuesct00rfi7ejo0lm3fs4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgZap322waIN-0RHPfWEzJQJVu8VhYu0E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "206133460237-ngfsc8tuiqcuesct00rfi7ejo0lm3fs4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
