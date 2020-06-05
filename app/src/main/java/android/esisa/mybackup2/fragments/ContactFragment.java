@@ -49,15 +49,7 @@ private  String nameContact, phoneContact, emailContact;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
-
-        Log.i("cycle","on createViewFragment");
         View view= inflater.inflate(R.layout.fragment_contact, container, false);
-        String[] menuitems={
-                "Do something !",
-                "Do something else !",
-                "Do yet another thing!"
-        };
         final ListView listView=view.findViewById(R.id.listView1);
 
         database = FirebaseDatabase.getInstance();

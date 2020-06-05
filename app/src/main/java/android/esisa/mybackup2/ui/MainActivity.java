@@ -14,6 +14,7 @@ import android.esisa.mybackup2.fragments.ContactFragment;
 import android.esisa.mybackup2.fragments.HomeFragment;
 import android.esisa.mybackup2.R;
 import android.esisa.mybackup2.fragments.SmsFragment;
+import android.esisa.mybackup2.models.Sms;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -56,29 +57,17 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        if (checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_DENIED) {
+        if (checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_DENIED && checkSelfPermission(Manifest.permission.READ_SMS)== PackageManager.PERMISSION_DENIED) {
             Log.i("cycle", "if :checkSelfPermission");
-            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 1);
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS,Manifest.permission.READ_SMS}, 1);
             return;
         } else {
             Log.i("cycle", "else :checkSelfPermission");
-             contactAdapter = new ContactAdapter(this);
-           // listView1.setAdapter(contactAdapter);
-
-        }
-
-        if(checkSelfPermission(Manifest.permission.READ_SMS)== PackageManager.PERMISSION_DENIED)
-        {
-            Log.i("cycle","if :checkSelfPermission");
-            requestPermissions(new String[]{Manifest.permission.READ_SMS},1);
-            return ;
-        }
-        else{
-            Log.i("cycle","else");
-            smsAdapter= new SmsAdapter(this);
+            //contactAdapter = new ContactAdapter(this);
+            // smsAdapter= new SmsAdapter(this);
+            //listView1.setAdapter(contactAdapter);
             //listView2.setAdapter(smsAdapter);
         }
-
 
 
 
@@ -143,8 +132,8 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.i("cycle", "grantResults[0]");
-            contactAdapter = new ContactAdapter(this);
-            smsAdapter= new SmsAdapter(this);
+           // contactAdapter = new ContactAdapter(this);
+           // smsAdapter= new SmsAdapter(this);
            //listView1.setAdapter(contactAdapter);
           // listView2.setAdapter(smsAdapter);
         }
