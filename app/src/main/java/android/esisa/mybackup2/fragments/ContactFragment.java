@@ -1,19 +1,12 @@
 package android.esisa.mybackup2.fragments;
 
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-
 import android.esisa.mybackup2.R;
 import android.esisa.mybackup2.adapters.ContactAdapter;
-import android.esisa.mybackup2.adapters.ContactAdapter1;
 import android.esisa.mybackup2.models.Contact;
-import android.esisa.mybackup2.ui.MainActivity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -40,13 +33,13 @@ public class ContactFragment extends Fragment{
 
 private  String nameContact, phoneContact, emailContact;
     long cp = 0;
-    ContactAdapter adapter;
+
 
     private Button SaveBtn;
     FirebaseDatabase database;
     DatabaseReference ref;
 
-
+    private ContactAdapter adapter;
     public ContactFragment() {
         Log.i("cycle","ContactFragment");
     }
@@ -59,7 +52,7 @@ private  String nameContact, phoneContact, emailContact;
 
 
         Log.i("cycle","on createViewFragment");
-       View view= inflater.inflate(R.layout.fragment_contact, container, false);
+        View view= inflater.inflate(R.layout.fragment_contact, container, false);
         String[] menuitems={
                 "Do something !",
                 "Do something else !",
@@ -84,8 +77,6 @@ private  String nameContact, phoneContact, emailContact;
         });
 
 
-        adapter = new ContactAdapter(getContext());
-        listView.setAdapter(adapter);
 
         SaveBtn = view.findViewById(R.id.btnSave);
         SaveBtn.setOnClickListener(new View.OnClickListener() {
@@ -115,10 +106,11 @@ private  String nameContact, phoneContact, emailContact;
            }
         });
 
-       // ContactAdapter listViewAdapter=new ContactAdapter(getActivity());
-      //  listView.setAdapter(listViewAdapter);
 
 
+
+        adapter = new ContactAdapter(getContext());
+        listView.setAdapter(adapter);
 
         return view;
 

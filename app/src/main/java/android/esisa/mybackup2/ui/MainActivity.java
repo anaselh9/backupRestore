@@ -9,6 +9,7 @@ import android.Manifest;
 import android.content.ContentResolver;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.esisa.mybackup2.adapters.SmsAdapter;
 import android.esisa.mybackup2.fragments.ContactFragment;
 import android.esisa.mybackup2.fragments.HomeFragment;
 import android.esisa.mybackup2.R;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private ContactAdapter contactAdapter;
+    private SmsAdapter smsAdapter;
 
 
     @Override
@@ -60,6 +62,18 @@ public class MainActivity extends AppCompatActivity {
             Log.i("cycle", "else :checkSelfPermission");
             ContactAdapter adapter = new ContactAdapter(this);
             //listView1.setAdapter(adapter);
+        }
+
+        if(checkSelfPermission(Manifest.permission.READ_SMS)== PackageManager.PERMISSION_DENIED)
+        {
+            Log.i("cycle","if :checkSelfPermission");
+            requestPermissions(new String[]{Manifest.permission.READ_SMS},1);
+            return ;
+        }
+        else{
+            Log.i("cycle","else");
+            smsAdapter = new SmsAdapter(this);
+            //listView.setAdapter(smsAdapter);
         }
 
 
@@ -127,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.i("cycle", "grantResults[0]");
             ContactAdapter adapter = new ContactAdapter(this);
+            SmsAdapter adapter1= new SmsAdapter(this);
             //listView1.setAdapter(adapter);
         }
 
