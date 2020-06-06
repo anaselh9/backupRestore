@@ -39,7 +39,6 @@ public class ContactFragment extends Fragment{
 private  String nameContact, phoneContact, emailContact;
     long cp = 0;
 
-
     private Button SaveBtn;
     FirebaseDatabase database;
     DatabaseReference ref;
