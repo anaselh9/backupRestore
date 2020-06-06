@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private ContactAdapter contactAdapter;
     private SmsAdapter smsAdapter;
 
+    private int pos;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,18 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        if (checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_DENIED && checkSelfPermission(Manifest.permission.READ_SMS)== PackageManager.PERMISSION_DENIED) {
-            Log.i("cycle", "if :checkSelfPermission");
-            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS,Manifest.permission.READ_SMS}, 1);
-            return;
-        } else {
-            Log.i("cycle", "else :checkSelfPermission");
-            //contactAdapter = new ContactAdapter(this);
-            // smsAdapter= new SmsAdapter(this);
-            //listView1.setAdapter(contactAdapter);
-            //listView2.setAdapter(smsAdapter);
 
-        }
 
 
 
@@ -76,20 +67,39 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getPosition() == 0) {
+                    pos=tab.getPosition();
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.Frame, new HomeFragment())
                             .commitNow();
                     Toast.makeText(MainActivity.this, "Selected Position" + tab.getPosition(), Toast.LENGTH_SHORT).show();
                 } else if (tab.getPosition() == 1) {
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.Frame, new ContactFragment())
-                            .commitNow();
-                    Toast.makeText(MainActivity.this, "Selected Position" + tab.getPosition(), Toast.LENGTH_SHORT).show();
+                    pos=tab.getPosition();
+                    if (checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_DENIED ) {
+                        Log.i("cycle", "if :checkSelfPermission");
+                        requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 1);
+                        return;
+                    } else {
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.Frame, new ContactFragment())
+                                .commitNow();
+                        Toast.makeText(MainActivity.this, "Selected Position" + tab.getPosition(), Toast.LENGTH_SHORT).show();
+
+                    }
+
+
                 } else if (tab.getPosition() == 2) {
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.Frame, new SmsFragment())
-                            .commitNow();
-                    Toast.makeText(MainActivity.this, "Selected Position" + tab.getPosition(), Toast.LENGTH_SHORT).show();
+                    pos=tab.getPosition();
+                    if (checkSelfPermission(Manifest.permission.READ_SMS)== PackageManager.PERMISSION_DENIED) {
+                        Log.i("cycle", "if :checkSelfPermission");
+                        requestPermissions(new String[]{Manifest.permission.READ_SMS}, 1);
+                        return;
+                    } else {
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.Frame, new SmsFragment())
+                                .commitNow();
+                        Toast.makeText(MainActivity.this, "Selected Position" + tab.getPosition(), Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             }
 
@@ -133,10 +143,16 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.i("cycle", "grantResults[0]");
-           // contactAdapter = new ContactAdapter(this);
-           // smsAdapter= new SmsAdapter(this);
-           //listView1.setAdapter(contactAdapter);
-          // listView2.setAdapter(smsAdapter);
+            if(pos==1) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.Frame, new ContactFragment())
+                        .commitNow();
+            }else if(pos==2) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.Frame, new SmsFragment())
+                        .commitNow();
+            }
+
         }
 
     }
