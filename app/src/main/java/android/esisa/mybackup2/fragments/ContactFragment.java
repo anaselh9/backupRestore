@@ -1,8 +1,10 @@
 package android.esisa.mybackup2.fragments;
 
 
+import android.content.Context;
 import android.esisa.mybackup2.R;
 import android.esisa.mybackup2.adapters.ContactAdapter;
+import android.esisa.mybackup2.dal.ContactDao;
 import android.esisa.mybackup2.models.Contact;
 import android.os.Bundle;
 
@@ -25,6 +27,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,13 +47,14 @@ private  String nameContact, phoneContact, emailContact;
     private ContactAdapter adapter;
     public ContactFragment() {
         Log.i("cycle","ContactFragment");
+
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        Log.i("cycle","onCreateView Fragment");
         View view= inflater.inflate(R.layout.fragment_contact, container, false);
         final ListView listView=view.findViewById(R.id.listView1);
 
@@ -108,6 +114,7 @@ private  String nameContact, phoneContact, emailContact;
 
 
     }
+
 
 
 }

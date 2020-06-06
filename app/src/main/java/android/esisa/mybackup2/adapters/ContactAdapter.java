@@ -1,6 +1,7 @@
 package android.esisa.mybackup2.adapters;
 
 import android.content.Context;
+import android.esisa.mybackup2.fragments.ContactFragment;
 import android.esisa.mybackup2.models.Contact;
 import android.esisa.mybackup2.dal.ContactDao;
 import android.esisa.mybackup2.R;
@@ -26,10 +27,8 @@ public class ContactAdapter extends ArrayAdapter {
     public ContactAdapter(@NonNull Context context) {
 
         super(context,0);
-        Log.i("cycle","ContactAdapte cons");
         contactDao=new ContactDao(context);
         data=contactDao.getData();
-        Log.i("cycle","ContactAdapte fin cons");
     }
     public static class Viewholder extends RecyclerView.ViewHolder {
         TextView name;

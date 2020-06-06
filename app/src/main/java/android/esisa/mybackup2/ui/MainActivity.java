@@ -2,6 +2,7 @@ package android.esisa.mybackup2.ui;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -56,12 +57,7 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.Frame, new HomeFragment())
                     .commitNow();
         }
-
-
-
-
-
-
+        
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -116,12 +112,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -155,6 +146,60 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+    }
+   @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+
+        MenuItem menuItem=menu.findItem(R.id.search);
+        menuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                Log.i("cycle","onMenuItemActionExpand");
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                Log.i("cycle","onMenuItemActionCollapse");
+                return true;
+            }
+        });
+        SearchView searchView=(SearchView)menuItem.getActionView();
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+
+
+
+                 if (newText.isEmpty()) {
+                    Log.i("cycle", "newText.isEmpty");
+                    //contactAdapter.init();
+                }
+                else{
+                    Log.i("cycle", "newText.isEmpty else");
+                    //contactAdapter.update(newText);
+
+                }
+
+
+                return true;
+            }
+
+        });
+
+        return true;
     }
 
 
