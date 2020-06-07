@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.Frame, new HomeFragment())
                     .commitNow();
         }
-        
+
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
