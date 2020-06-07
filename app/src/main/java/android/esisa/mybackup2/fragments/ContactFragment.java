@@ -43,17 +43,19 @@ private  String nameContact, phoneContact, emailContact;
     FirebaseDatabase database;
     DatabaseReference ref;
 
-    private ContactAdapter adapter;
-    public ContactFragment() {
-        Log.i("cycle","ContactFragment");
 
+    private ContactAdapter adapter;
+    private ArrayList<Contact> data= new ArrayList<>();
+
+    public ContactFragment(ArrayList<Contact> data) {
+            this.data = data;
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.i("cycle","onCreateView Fragment");
+
         View view= inflater.inflate(R.layout.fragment_contact, container, false);
         final ListView listView=view.findViewById(R.id.listView1);
 
@@ -106,13 +108,14 @@ private  String nameContact, phoneContact, emailContact;
 
 
 
-        adapter = new ContactAdapter(getContext());
+        adapter = new ContactAdapter(getContext(),data);
         listView.setAdapter(adapter);
 
         return view;
 
 
     }
+
 
 
 

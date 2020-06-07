@@ -20,15 +20,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactAdapter extends ArrayAdapter {
-    private List<Contact> data=new ArrayList<>();
-    private List<Contact> cache=new ArrayList<>();
+    private ArrayList<Contact> data=new ArrayList<>();
+    private ArrayList<Contact> cache=new ArrayList<>();
     private ContactDao contactDao;
 
-    public ContactAdapter(@NonNull Context context) {
+    public ArrayList<Contact> getData() {
+        return data;
+    }
+
+    public ContactAdapter(@NonNull Context context, ArrayList<Contact> donnees) {
 
         super(context,0);
         contactDao=new ContactDao(context);
-        data=contactDao.getData();
+
+        if(donnees.size()>0) {
+            this.data=donnees;
+        }else{
+            this.data = contactDao.getData();
+        }
     }
     public static class Viewholder extends RecyclerView.ViewHolder {
         TextView name;
@@ -37,7 +46,6 @@ public class ContactAdapter extends ArrayAdapter {
         //View v;
         public Viewholder(View v){
             super(v);
-            Log.i("cycle","constructeur ViewHolder");
             name=v.findViewById(R.id.name);
             phone=v.findViewById(R.id.phone);
             email=v.findViewById(R.id.email);
@@ -48,7 +56,7 @@ public class ContactAdapter extends ArrayAdapter {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        Log.i("cycle","getView");
+        //Log.i("cycle","getView");
         Viewholder viewHolder;
         if (convertView == null) {
 

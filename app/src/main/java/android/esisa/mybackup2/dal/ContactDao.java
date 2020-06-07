@@ -25,7 +25,6 @@ public class ContactDao {
 
     public ContactDao(Context context)
     {
-        Log.i("cycle","contactDao");
         Cursor Cursorcontacts=new CursorLoader(context, Contacts.CONTENT_URI,null,null,null,null).loadInBackground();
         Contact contact;
         while (Cursorcontacts.moveToNext()){
@@ -50,8 +49,8 @@ public class ContactDao {
                 contact.setEmail(cursorEmail.getString(0));//Hit projection 3ndi ghi column w7da
 
             }
-            Log.e("cycle",contact.toString());
             data.add(contact);
+
 
         }
     }

@@ -3,6 +3,7 @@ package android.esisa.mybackup2.adapters;
 import android.content.Context;
 import android.esisa.mybackup2.R;
 import android.esisa.mybackup2.dal.SmsDao;
+import android.esisa.mybackup2.models.Contact;
 import android.esisa.mybackup2.models.Sms;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,17 +20,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SmsAdapter extends ArrayAdapter {
-    private List<Sms> data=new ArrayList<>();
-    private List<Sms> cache=new ArrayList<>();
+    private ArrayList<Sms> data=new ArrayList<>();
+    private ArrayList<Sms> cache=new ArrayList<>();
     private SmsDao smsDao;
 
-    public SmsAdapter(@NonNull Context context) {
+    public SmsAdapter(@NonNull Context context,ArrayList<Sms> donnees) {
         super(context,0);
-        Log.i("cycle","constructeur SmsAdapter");
         smsDao=new SmsDao(context);
-        data=smsDao.getData();
-
-        Log.i("cycle",this.data.size()+" size of data");
+        if(donnees.size()>0) {
+            this.data=donnees;
+        }else{
+            this.data = smsDao.getData();
+        }
 
     }
     public static class Viewholder extends RecyclerView.ViewHolder {
@@ -39,7 +41,7 @@ public class SmsAdapter extends ArrayAdapter {
         //View v;
         public Viewholder(View v){
             super(v);
-            Log.i("cycle","constructeur ViewHolder");
+
             number=v.findViewById(R.id.number);
             contenu=v.findViewById(R.id.cont);
 
@@ -50,7 +52,7 @@ public class SmsAdapter extends ArrayAdapter {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        Log.i("cycle","getView");
+
         Viewholder viewHolder;
         if (convertView == null) {
 

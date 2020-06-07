@@ -11,13 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SmsDao {
-    private List<Sms> data= new ArrayList<>();
+    private ArrayList<Sms> data= new ArrayList<>();
 
-    public List<Sms> getData() {
+    public ArrayList<Sms> getData() {
         return data;
     }
 
-    public void setData(List<Sms> data) {
+    public void setData(ArrayList<Sms> data) {
         this.data = data;
     }
 
@@ -37,7 +37,7 @@ public class SmsDao {
             sms.setContenu(cursor.getString(cursor.getColumnIndexOrThrow("body")).toString());
 
             data.add(sms);
-            Log.e("cycle", sms.toString());
+            //Log.e("cycle", sms.toString());
         }
         cursor.close();
 

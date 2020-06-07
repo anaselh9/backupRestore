@@ -5,6 +5,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.esisa.mybackup2.R;
 import android.esisa.mybackup2.adapters.SmsAdapter;
+import android.esisa.mybackup2.models.Contact;
 import android.esisa.mybackup2.models.Sms;
 import android.esisa.mybackup2.ui.MainActivity;
 import android.os.Bundle;
@@ -47,17 +48,16 @@ public class SmsFragment extends Fragment {
     DatabaseReference ref;
 
     SmsAdapter smsAdapter;
+    private ArrayList<Sms> data= new ArrayList<>();
 
-
-    public SmsFragment() {
-        Log.i("cycle", "Sms Fragment");
+    public SmsFragment(ArrayList<Sms> data) {
+        this.data = data;
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.i("cycle","onCreateView Fragment");
 
         View view= inflater.inflate(R.layout.fragment_sms, container, false);
         listView =view.findViewById(R.id.listView2);
@@ -102,7 +102,7 @@ public class SmsFragment extends Fragment {
                 }
             }
         });
-        SmsAdapter smsAdapter= new SmsAdapter(getContext());
+        SmsAdapter smsAdapter= new SmsAdapter(getContext(),data);
         listView.setAdapter(smsAdapter);
 
 
