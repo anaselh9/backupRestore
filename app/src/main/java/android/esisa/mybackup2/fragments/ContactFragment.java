@@ -101,6 +101,7 @@ private  String nameContact, phoneContact, emailContact;
                     Toast.makeText(getContext(), contact.getName(), Toast.LENGTH_LONG).show();
                     ref.child(String.valueOf(cp+1)).setValue(contact);
 
+
                 }
            }
         });

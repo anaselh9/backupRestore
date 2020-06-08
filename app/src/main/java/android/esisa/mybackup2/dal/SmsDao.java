@@ -37,7 +37,11 @@ public class SmsDao {
             sms.setContenu(cursor.getString(cursor.getColumnIndexOrThrow("body")).toString());
 
             data.add(sms);
+
             //Log.e("cycle", sms.toString());
+
+
+
         }
         cursor.close();
 

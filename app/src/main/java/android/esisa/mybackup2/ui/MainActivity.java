@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.esisa.mybackup2.adapters.SmsAdapter;
@@ -25,12 +26,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.esisa.mybackup2.adapters.ContactAdapter;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +47,10 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView1;
     private ListView listView2;
 
+//FirebaeTest
+        FirebaseDatabase firebaseDatabase;
+        DatabaseReference testRef;
+    private  String nameContact, phoneContact, emailContact;
 
 
     private ContactAdapter contactAdapter;
@@ -129,7 +140,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.Backup:
-                Toast.makeText(this, "Backup selected", Toast.LENGTH_LONG).show();
+               // Toast.makeText(this, "Backup selected", Toast.LENGTH_LONG).show();
+                testFireBaseDatabase();
                 return true;
             case R.id.Restore:
                 Toast.makeText(this, "Restore selected", Toast.LENGTH_LONG).show();
@@ -139,8 +151,41 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+        public void testFireBaseDatabase(){
+                //Toast.makeText(this, "Hello Test", Toast.LENGTH_SHORT).show();
 
-    @Override
+            firebaseDatabase = FirebaseDatabase.getInstance();
+            testRef = firebaseDatabase.getReference("Test");
+            testRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                       // testRef.setValue("Test Firebase From Selected Item Menu");
+
+                    for (int i=1; i<dataContact.size(); i++){
+                            nameContact = dataContact.get(i).getName();
+                            phoneContact = dataContact.get(i).getPhone();
+                            emailContact = dataContact.get(i).getEmail();
+
+                        Contact contact = new Contact();
+                        contact.setName(nameContact);
+                        contact.setPhone(phoneContact);
+                        contact.setEmail(emailContact);
+
+                        testRef.child("Contacts1").child(String.valueOf(i)).setValue(contact);
+
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
+        }
+            @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
