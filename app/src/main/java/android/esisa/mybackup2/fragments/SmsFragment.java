@@ -62,47 +62,47 @@ public class SmsFragment extends Fragment {
         View view= inflater.inflate(R.layout.fragment_sms, container, false);
         listView =view.findViewById(R.id.listView2);
 
-        database = FirebaseDatabase.getInstance();
-        ref = database.getReference("Sms");
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    cp = (dataSnapshot.getChildrenCount());
-                }
-            }
+//        database = FirebaseDatabase.getInstance();
+//        ref = database.getReference("Sms");
+//        ref.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                if(dataSnapshot.exists()){
+//                    cp = (dataSnapshot.getChildrenCount());
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        btnSaveSms = view.findViewById(R.id.btnSms);
-        btnSaveSms.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        numberDestination = ((TextView)view.findViewById(R.id.number)).getText().toString().trim();
-                        contentMessage = ((TextView)view.findViewById(R.id.cont)).getText().toString().trim();
-                    }
-                });
-                Sms mySms = new Sms();
-                mySms.setNumero(numberDestination);
-                mySms.setContenu(contentMessage);
-
-
-                if (contentMessage != null && contentMessage.length() > 0) {
-
-                    Toast.makeText(getContext(), mySms.getNumero(), Toast.LENGTH_LONG).show();
-                    ref.child(String.valueOf(cp+1)).setValue(mySms);
-
-                }
-            }
-        });
-        SmsAdapter smsAdapter= new SmsAdapter(getContext(),data);
+//        btnSaveSms = view.findViewById(R.id.btnSms);
+//        btnSaveSms.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                        numberDestination = ((TextView)view.findViewById(R.id.number)).getText().toString().trim();
+//                        contentMessage = ((TextView)view.findViewById(R.id.cont)).getText().toString().trim();
+//                    }
+//                });
+//                Sms mySms = new Sms();
+//                mySms.setNumero(numberDestination);
+//                mySms.setContenu(contentMessage);
+//
+//
+//                if (contentMessage != null && contentMessage.length() > 0) {
+//
+//                    Toast.makeText(getContext(), mySms.getNumero(), Toast.LENGTH_LONG).show();
+//                    ref.child(String.valueOf(cp+1)).setValue(mySms);
+//
+//                }
+//            }
+//        });
+      SmsAdapter smsAdapter= new SmsAdapter(getContext(),data);
         listView.setAdapter(smsAdapter);
 
 
