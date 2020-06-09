@@ -103,6 +103,7 @@ public class SmsFragment extends Fragment {
 //            }
 //        });
       SmsAdapter smsAdapter= new SmsAdapter(getContext(),data);
+      smsAdapter.notifyDataSetChanged();
         listView.setAdapter(smsAdapter);
 
 
