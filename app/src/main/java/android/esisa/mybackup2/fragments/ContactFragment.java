@@ -59,65 +59,79 @@ private  String nameContact, phoneContact, emailContact;
         View view= inflater.inflate(R.layout.fragment_contact, container, false);
         final ListView listView=view.findViewById(R.id.listView1);
 
-        database = FirebaseDatabase.getInstance();
-        ref = database.getReference("Contacts");
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    cp = (dataSnapshot.getChildrenCount());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
-
-        SaveBtn = view.findViewById(R.id.btnSave);
-        SaveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                         nameContact = ((TextView) view.findViewById(R.id.name)).getText().toString().trim();
-                         phoneContact = ((TextView) view.findViewById(R.id.phone)).getText().toString().trim();
-                         emailContact = ((TextView) view.findViewById(R.id.email)).getText().toString().trim();
-
-                   }
-                });
-                Contact contact = new Contact();
-
-                contact.setName(nameContact);
-                contact.setEmail(emailContact);
-                contact.setPhone(phoneContact);
-
-                if (nameContact != null && nameContact.length() > 0) {
-
-                    Toast.makeText(getContext(), contact.getName(), Toast.LENGTH_LONG).show();
-                    ref.child(String.valueOf(cp+1)).setValue(contact);
-
-
-                }
-           }
-        });
-
-
-
+//        database = FirebaseDatabase.getInstance();
+//        ref = database.getReference("Contacts");
+//        ref.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                if(dataSnapshot.exists()){
+//                    cp = (dataSnapshot.getChildrenCount());
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+//
+//
+//
+//        SaveBtn = view.findViewById(R.id.btnSave);
+//        SaveBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                         nameContact = ((TextView) view.findViewById(R.id.name)).getText().toString().trim();
+//                         phoneContact = ((TextView) view.findViewById(R.id.phone)).getText().toString().trim();
+//                         emailContact = ((TextView) view.findViewById(R.id.email)).getText().toString().trim();
+//
+//                   }
+//                });
+//                Contact contact = new Contact();
+//
+//                contact.setName(nameContact);
+//                contact.setEmail(emailContact);
+//                contact.setPhone(phoneContact);
+//
+//                if (nameContact != null && nameContact.length() > 0) {
+//
+//                    Toast.makeText(getContext(), contact.getName(), Toast.LENGTH_LONG).show();
+//                    ref.child(String.valueOf(cp+1)).setValue(contact);
+//
+//
+//                }
+//           }
+//        });
+//
 
         adapter = new ContactAdapter(getContext(),data);
+        adapter.notifyDataSetChanged();
         listView.setAdapter(adapter);
+
+
+        // test update
+
+//        try{
+//
+//            if(data.size())
+//
+//
+//
+//        }catch(Exception ex){
+//            Toast.makeText(getContext(), "error updating", Toast.LENGTH_SHORT).show();
+//        }
 
         return view;
 
 
     }
 
+    private boolean updateListContacts(ArrayList<Contact> updatedListContact) {
+        return false;
 
-
+    }
 
 }

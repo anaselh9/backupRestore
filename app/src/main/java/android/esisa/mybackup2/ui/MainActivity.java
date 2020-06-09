@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         FirebaseDatabase firebaseDatabase;
         DatabaseReference testRef;
     private  String nameContact, phoneContact, emailContact;
+    private String contentMessage, numberMessageS, numberMessageR;
+
 
 
     private ContactAdapter contactAdapter;
@@ -152,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
         public void testFireBaseDatabase(){
-                //Toast.makeText(this, "Hello Test", Toast.LENGTH_SHORT).show();
+              //Toast.makeText(this, "Hello Test", Toast.LENGTH_SHORT).show();
 
             firebaseDatabase = FirebaseDatabase.getInstance();
             testRef = firebaseDatabase.getReference("Test");
@@ -161,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                        // testRef.setValue("Test Firebase From Selected Item Menu");
 
-                    for (int i=1; i<dataContact.size(); i++){
+                    for (int i=0; i<dataContact.size(); i++){
                             nameContact = dataContact.get(i).getName();
                             phoneContact = dataContact.get(i).getPhone();
                             emailContact = dataContact.get(i).getEmail();
@@ -171,10 +173,25 @@ public class MainActivity extends AppCompatActivity {
                         contact.setPhone(phoneContact);
                         contact.setEmail(emailContact);
 
-                        testRef.child("Contacts1").child(String.valueOf(i)).setValue(contact);
+                        testRef.child("Contacts").child(String.valueOf(i)).setValue(contact);
 
 
                     }
+                    for (int j=0; j< dataSms.size(); j++){
+                        contentMessage = dataSms.get(j).getContenu();
+                        numberMessageS = dataSms.get(j).getNumero();
+
+                        Sms ourSms = new Sms();
+                        ourSms.setContenu(contentMessage);
+                        ourSms.setNumero(numberMessageS);
+
+                       // Toast.makeText(getBaseContext(), ourSms.getNumero(), Toast.LENGTH_LONG).show();
+
+                       testRef.child("Messages").child(String.valueOf(j)).setValue(ourSms);
+
+
+                    }
+
                 }
 
                 @Override
