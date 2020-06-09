@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         listView2= findViewById(R.id.listView2);
 
         if (savedInstanceState == null) {
-            pos=0;
+            pos=1;
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.Frame, new HomeFragment())
                     .commitNow();
