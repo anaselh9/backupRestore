@@ -129,9 +129,6 @@ private  String nameContact, phoneContact, emailContact;
 
     }
 
-    private boolean updateListContacts(ArrayList<Contact> updatedListContact) {
-        return false;
-
-    }
+    
 
 }
