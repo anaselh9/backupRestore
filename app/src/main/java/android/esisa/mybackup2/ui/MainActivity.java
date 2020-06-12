@@ -9,8 +9,10 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.esisa.mybackup2.GoogleInformations;
 import android.esisa.mybackup2.adapters.SmsAdapter;
 import android.esisa.mybackup2.dal.ContactDao;
 import android.esisa.mybackup2.dal.SmsDao;
@@ -22,6 +24,7 @@ import android.esisa.mybackup2.models.Contact;
 import android.esisa.mybackup2.models.Sms;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +35,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.esisa.mybackup2.adapters.ContactAdapter;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -46,26 +56,24 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ListView listView1;
     private ListView listView2;
-
-//FirebaeTest
-        FirebaseDatabase firebaseDatabase;
-        DatabaseReference testRef;
+    private SignInButton signInButton;
+    private int RC_SIGN_IN = 0;
+    private GoogleSignInClient mGoogleSignInClient;
+    private GoogleInformations googleInformations;
+    private String idEmail;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference testRef;
     private  String nameContact, phoneContact, emailContact;
     private String contentMessage, numberMessageS, numberMessageR;
-
-
-
+    private ContactFragment contactFragment;
+    private String nameTest;
     private ContactAdapter contactAdapter;
     private SmsAdapter smsAdapter;
-
     private int pos;
-
     private ArrayList<Contact> dataContact= new ArrayList<>();
     private ArrayList<Sms> dataSms= new ArrayList<>();
-
     private ArrayList<Contact> contacts= new ArrayList<>();
     private ArrayList<Sms> sms= new ArrayList<>();
-
     private ContactDao contactDao;
     private SmsDao smsDao;
 
@@ -76,6 +84,24 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = findViewById(R.id.tabLayout);
         listView1 = findViewById(R.id.listView1);
         listView2= findViewById(R.id.listView2);
+        signInButton = findViewById(R.id.sign_in_button);
+
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.sign_in_button:
+                        signIn();
+                        break;
+                }
+            }
+        });
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         if (savedInstanceState == null) {
             pos=0;
@@ -83,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.Frame, new HomeFragment())
                     .commitNow();
         }
-
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -105,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Selected Position" + tab.getPosition(), Toast.LENGTH_SHORT).show();
 
                     }
-
 
                 } else if (tab.getPosition() == 2) {
                     pos=tab.getPosition();
@@ -136,6 +160,32 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void signIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
+    }
+
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            Intent homeIntent = new Intent(MainActivity.this, GoogleInformations.class);
+              startActivity(homeIntent);
+        } catch (ApiException e) {
+            Log.w("Error", "signInResult:failed code=" + e.getStatusCode());
+
+        }
+    }
 
 
     @Override
@@ -146,18 +196,28 @@ public class MainActivity extends AppCompatActivity {
                 testFireBaseDatabase();
                 return true;
             case R.id.Restore:
-                Toast.makeText(this, "Restore selected", Toast.LENGTH_LONG).show();
+                getEmailBack();
+                Toast.makeText(this, idEmail, Toast.LENGTH_LONG).show();
+
+                return true;
+            case R.id.SignInEmail:
+
+           Intent signInIntent = new Intent(MainActivity.this, GoogleInformations.class);
+             startActivity(signInIntent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
     }
+    public void getEmailBack(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        idEmail = sharedPreferences.getString("Email", "no-id");
+    }
         public void testFireBaseDatabase(){
-              //Toast.makeText(this, "Hello Test", Toast.LENGTH_SHORT).show();
 
             firebaseDatabase = FirebaseDatabase.getInstance();
-            testRef = firebaseDatabase.getReference("Test");
+            testRef = firebaseDatabase.getReference(idEmail);
             testRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -173,8 +233,7 @@ public class MainActivity extends AppCompatActivity {
                         contact.setPhone(phoneContact);
                         contact.setEmail(emailContact);
 
-                        testRef.child("Contacts").child(String.valueOf(i)).setValue(contact);
-
+                        testRef.child("email").child("Contacts").child(String.valueOf(i)).setValue(contact);
 
                     }
                     for (int j=0; j< dataSms.size(); j++){
@@ -189,10 +248,8 @@ public class MainActivity extends AppCompatActivity {
 
                        testRef.child("Messages").child(String.valueOf(j)).setValue(ourSms);
 
-
                     }
-
-                }
+                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {

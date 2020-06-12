@@ -10,6 +10,10 @@
         android:title="Restore"
         app:showAsAction="never"
         />
+    <item android:id="@+id/SignInEmail"
+        android:title="Sign In Email"
+        app:showAsAction="never"
+        />
     <item
         android:id="@+id/search"
         android:title="search"
