@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,6 +25,7 @@ import android.esisa.mybackup2.models.Contact;
 import android.esisa.mybackup2.models.Sms;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -31,7 +33,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.esisa.mybackup2.adapters.ContactAdapter;
 
@@ -41,6 +46,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
@@ -49,8 +57,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
@@ -76,6 +87,14 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Sms> sms= new ArrayList<>();
     private ContactDao contactDao;
     private SmsDao smsDao;
+    ProgressBar progressBar;
+
+
+    //Section Code : Retriving Data
+    private ArrayList<Contact> listContactsR;
+    private ArrayList<Sms> listSmsR;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         listView1 = findViewById(R.id.listView1);
         listView2= findViewById(R.id.listView2);
         signInButton = findViewById(R.id.sign_in_button);
+        progressBar = findViewById(R.id.progressBar);
 
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,41 +207,41 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.Backup:
-               // Toast.makeText(this, "Backup selected", Toast.LENGTH_LONG).show();
+
                 testFireBaseDatabase();
+
                 return true;
             case R.id.Restore:
                 getEmailBack();
                 Toast.makeText(this, idEmail, Toast.LENGTH_LONG).show();
-
-                return true;
+             return true;
             case R.id.SignInEmail:
-
-           Intent signInIntent = new Intent(MainActivity.this, GoogleInformations.class);
+             Intent signInIntent = new Intent(MainActivity.this, GoogleInformations.class);
              startActivity(signInIntent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
-    }
-    public void getEmailBack(){
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        idEmail = sharedPreferences.getString("Email", "no-id");
-    }
+     }
+        public void getEmailBack(){
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            idEmail = sharedPreferences.getString("Email", "no-id");
+        }
         public void testFireBaseDatabase(){
-
+            dataContact = AllContacts();
+            dataSms = AllSms();
             firebaseDatabase = FirebaseDatabase.getInstance();
-            testRef = firebaseDatabase.getReference(idEmail);
+            testRef = firebaseDatabase.getReference("Backup Restore");
             testRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                        // testRef.setValue("Test Firebase From Selected Item Menu");
+                   // testRef.setValue(idEmail);
 
                     for (int i=0; i<dataContact.size(); i++){
                             nameContact = dataContact.get(i).getName();
@@ -233,8 +253,7 @@ public class MainActivity extends AppCompatActivity {
                         contact.setPhone(phoneContact);
                         contact.setEmail(emailContact);
 
-                        testRef.child("email").child("Contacts").child(String.valueOf(i)).setValue(contact);
-
+                        testRef.child("Contacts").child(String.valueOf(i)).setValue(contact);
                     }
                     for (int j=0; j< dataSms.size(); j++){
                         contentMessage = dataSms.get(j).getContenu();
@@ -246,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
 
                        // Toast.makeText(getBaseContext(), ourSms.getNumero(), Toast.LENGTH_LONG).show();
 
-                       testRef.child("Messages").child(String.valueOf(j)).setValue(ourSms);
+                       testRef.push().child("Messages").child(String.valueOf(j)).setValue(ourSms);
 
                     }
                  }
@@ -256,7 +275,6 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
-
 
         }
             @Override
@@ -274,9 +292,7 @@ public class MainActivity extends AppCompatActivity {
                         .replace(R.id.Frame, new SmsFragment(dataSms))
                         .commitNow();
             }
-
         }
-
     }
    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -290,7 +306,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("cycle","onMenuItemActionExpand");
                 return true;
             }
-
             @Override
             public boolean onMenuItemActionCollapse(MenuItem menuItem) {
                 Log.i("cycle","onMenuItemActionCollapse");
@@ -316,7 +331,6 @@ public class MainActivity extends AppCompatActivity {
                      getSupportFragmentManager().beginTransaction()
                              .replace(R.id.Frame, new ContactFragment(dataContact))
                              .commitNow();
-
                  }
                  else {
                      Log.i("cycle", "newText.isEmpty else");
@@ -354,11 +368,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
-
-
                 return true;
             }
-
         });
 
         return true;
