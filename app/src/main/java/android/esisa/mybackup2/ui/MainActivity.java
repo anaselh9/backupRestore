@@ -221,8 +221,17 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.Restore:
             //    getEmailBack(); pour afficher que retriving email marche
-                getListContacts();
 
+                if(pos==1) {
+                    Log.i("cycle", "onRequestPermissionsResult data "+dataContact.size());
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.Frame, new ContactFragment(getListContacts())
+                            .commitNow();
+                }else if(pos==2) {
+                    getSupportFragmentManager().beginTransaction()
+                            //.replace(R.id.Frame, new SmsFragment(/*khas hena list dial sms jrab hadchu */)
+                            .commitNow();
+                }
                Toast.makeText(getBaseContext(), emailFromDb
                      , Toast.LENGTH_LONG).show();
 
@@ -242,44 +251,35 @@ public class MainActivity extends AppCompatActivity {
             idEmail = sharedPreferences.getString("Email", "no-id");
         }
 
-        public Contact getListContacts(){
-           testRef = FirebaseDatabase.getInstance().getReference().child("Backup Restore").child("Contacts");
-                   // testRef = firebaseDatabase.getReference("Backup Restore").child("Contacts").child("1");
+        public /*Modif 1 */ArrayList<Contact> getListContacts(){
+            ArrayList<Contact> data = new ArrayList<>();  //Modif 2
+             testRef = FirebaseDatabase.getInstance().getReference().child("Backup Restore").child("Contacts");
+            // testRef = firebaseDatabase.getReference("Backup Restore").child("Contacts").child("1");
             //testRef = firebaseDatabase.getReference("Backup Restore").child("Contacts").child("0");
-           final Contact contactFireBase = new Contact();
+            Contact contactFireBase = new Contact();//Modif 3 7iadt final
             testRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                   //  Contact contactFireBase = dataSnapshot.getValue(Contact.class);
+                      // Contact contactFireBase = dataSnapshot.getValue(Contact.class);
                      // listContactsR.add(contactFireBase);
-
                 for(DataSnapshot contactDS : dataSnapshot.getChildren()){
                     nameFromDb = dataSnapshot.child("name").getValue().toString();
                     phoneFromDb = dataSnapshot.child("phone").getValue().toString();
                     emailFromDb = dataSnapshot.child("email").getValue().toString();
                 }
-
                     contactFireBase.setName(nameFromDb);
                     contactFireBase.setEmail(emailFromDb);
                     contactFireBase.setPhone(phoneFromDb);
-//
-                    //     listContactsR.add(contactFireBase);
-
-                   //  ContactFragment contactFragment = new ContactFragment(listContactsR);
-
-
-                //    emailFromDB = dataSnapshot.child("Email").getValue().toString();
-
-                 //   Toast.makeText(getBaseContext(), listContactsR.get(0).getName(), Toast.LENGTH_LONG).show();
-
+                    data.add(contactFireBase);//Modif 4 ajouter f data li declarite f modif 2
+                       //listContactsR.add(contactFireBase);  //ContactFragment contactFragment = new ContactFragment(listContactsR);
+                    // emailFromDB = dataSnapshot.child("Email").getValue().toString();
+                   //Toast.makeText(getBaseContext(), listContactsR.get(0).getName(), Toast.LENGTH_LONG).show();
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
                 }
             });
-        return contactFireBase;
+                 return data; //Modif 5
         }
         public void testFireBaseDatabase(){
             dataContact = AllContacts();
