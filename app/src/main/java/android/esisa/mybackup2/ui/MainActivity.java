@@ -1,19 +1,19 @@
 package android.esisa.mybackup2.ui;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+
+
 
 import android.Manifest;
-import android.app.ProgressDialog;
-import android.content.ContentResolver;
+
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
+
 import android.esisa.mybackup2.GoogleInformations;
 import android.esisa.mybackup2.adapters.SmsAdapter;
 import android.esisa.mybackup2.dal.ContactDao;
@@ -24,20 +24,20 @@ import android.esisa.mybackup2.R;
 import android.esisa.mybackup2.fragments.SmsFragment;
 import android.esisa.mybackup2.models.Contact;
 import android.esisa.mybackup2.models.Sms;
-import android.net.Uri;
+
 import android.os.Bundle;
-import android.os.Message;
+
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
+
 import android.view.MenuItem;
 import android.view.View;
+
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
+
 import android.widget.Toast;
 import android.esisa.mybackup2.adapters.ContactAdapter;
 
@@ -47,23 +47,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.sql.Time;
+
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+
 
 public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
@@ -94,9 +89,12 @@ public class MainActivity extends AppCompatActivity {
 
     //Section Code : Retriving Data
 
-    private ArrayList<Contact> listContactsR;
+    public ArrayList<Contact> listContactsR = new ArrayList<>();
+    public ArrayList<Contact> listFromFBase = new ArrayList<>();
     private ArrayList<Sms> listSmsR;
     private  String emailFromDB,nameFromDb,phoneFromDb,emailFromDb;
+    public Contact contactFireBase;
+    Contact myContact;
 
 
 
@@ -215,27 +213,23 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.Backup:
-
+                getEmailBack();
                 testFireBaseDatabase();
 
                 return true;
             case R.id.Restore:
-            //    getEmailBack(); pour afficher que retriving email marche
+                listFromFBase = getListContacts();
 
-                if(pos==1) {
-                    Log.i("cycle", "onRequestPermissionsResult data "+dataContact.size());
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.Frame, new ContactFragment(getListContacts())
-                            .commitNow();
-                }else if(pos==2) {
-                    getSupportFragmentManager().beginTransaction()
-                            //.replace(R.id.Frame, new SmsFragment(/*khas hena list dial sms jrab hadchu */)
-                            .commitNow();
-                }
-               Toast.makeText(getBaseContext(), emailFromDb
-                     , Toast.LENGTH_LONG).show();
+               if(pos == 1){
+                   getSupportFragmentManager().beginTransaction()
+                           .replace(R.id.Frame, new ContactFragment(listFromFBase))
+                           .commitNow();
+                   Toast.makeText(MainActivity.this, "Selected Position" + pos, Toast.LENGTH_SHORT).show();
 
-             // Toast.makeText(this, idEmail, Toast.LENGTH_LONG).show();
+            }
+
+
+
              return true;
             case R.id.SignInEmail:
              Intent signInIntent = new Intent(MainActivity.this, GoogleInformations.class);
@@ -251,41 +245,45 @@ public class MainActivity extends AppCompatActivity {
             idEmail = sharedPreferences.getString("Email", "no-id");
         }
 
-        public /*Modif 1 */ArrayList<Contact> getListContacts(){
-            ArrayList<Contact> data = new ArrayList<>();  //Modif 2
-             testRef = FirebaseDatabase.getInstance().getReference().child("Backup Restore").child("Contacts");
-            // testRef = firebaseDatabase.getReference("Backup Restore").child("Contacts").child("1");
+        public ArrayList<Contact> getListContacts(){
+           testRef = FirebaseDatabase.getInstance().getReference().child("BAckup Restore").child("Contacts");
+                   // testRef = firebaseDatabase.getReference("Backup Restore").child("Contacts").child("1");
             //testRef = firebaseDatabase.getReference("Backup Restore").child("Contacts").child("0");
-            Contact contactFireBase = new Contact();//Modif 3 7iadt final
+           //  listContactsR = new ArrayList<>();
             testRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                      // Contact contactFireBase = dataSnapshot.getValue(Contact.class);
+                   //  Contact contactFireBase = dataSnapshot.getValue(Contact.class);
                      // listContactsR.add(contactFireBase);
+                   // listContactsR =new ArrayList<>();
+                    listContactsR.clear();
                 for(DataSnapshot contactDS : dataSnapshot.getChildren()){
-                    nameFromDb = dataSnapshot.child("name").getValue().toString();
-                    phoneFromDb = dataSnapshot.child("phone").getValue().toString();
-                    emailFromDb = dataSnapshot.child("email").getValue().toString();
+                     myContact = contactDS.getValue(Contact.class);
+                    contactFireBase = new Contact();
+//                    nameFromDb = myContact.getName();
+//                    phoneFromDb = myContact.getPhone();
+//                    emailFromDb = myContact.getEmail();
+
+                    contactFireBase.setName(myContact.getName());
+                    contactFireBase.setEmail(myContact.getEmail());
+                    contactFireBase.setPhone(myContact.getPhone());
+
+                    listContactsR.add(contactFireBase);
+
                 }
-                    contactFireBase.setName(nameFromDb);
-                    contactFireBase.setEmail(emailFromDb);
-                    contactFireBase.setPhone(phoneFromDb);
-                    data.add(contactFireBase);//Modif 4 ajouter f data li declarite f modif 2
-                       //listContactsR.add(contactFireBase);  //ContactFragment contactFragment = new ContactFragment(listContactsR);
-                    // emailFromDB = dataSnapshot.child("Email").getValue().toString();
-                   //Toast.makeText(getBaseContext(), listContactsR.get(0).getName(), Toast.LENGTH_LONG).show();
                 }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                 }
             });
-                 return data; //Modif 5
+            return listContactsR;
         }
         public void testFireBaseDatabase(){
             dataContact = AllContacts();
             dataSms = AllSms();
             firebaseDatabase = FirebaseDatabase.getInstance();
-            testRef = firebaseDatabase.getReference("Backup Restore");
+            testRef = firebaseDatabase.getReference().child("BAckup Restore");
             testRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

@@ -35,6 +35,7 @@ public class ContactAdapter extends ArrayAdapter {
 
         if(donnees.size()>0) {
             this.data=donnees;
+
         }else{
             this.data = contactDao.getData();
         }
