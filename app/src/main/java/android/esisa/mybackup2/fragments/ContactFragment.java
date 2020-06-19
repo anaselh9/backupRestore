@@ -129,10 +129,5 @@ private  String nameContact, phoneContact, emailContact;
 
     }
 
-    public String getNameContact(){
-        return "Saaduchi";
-    }
-
-
 
 }

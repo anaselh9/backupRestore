@@ -1,6 +1,7 @@
 package android.esisa.mybackup2.ui;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
@@ -51,6 +52,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -91,8 +93,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     //Section Code : Retriving Data
+
     private ArrayList<Contact> listContactsR;
     private ArrayList<Sms> listSmsR;
+    private  String emailFromDB,nameFromDb,phoneFromDb,emailFromDb;
 
 
 
@@ -216,8 +220,13 @@ public class MainActivity extends AppCompatActivity {
 
                 return true;
             case R.id.Restore:
-                getEmailBack();
-                Toast.makeText(this, idEmail, Toast.LENGTH_LONG).show();
+            //    getEmailBack(); pour afficher que retriving email marche
+                getListContacts();
+
+               Toast.makeText(getBaseContext(), emailFromDb
+                     , Toast.LENGTH_LONG).show();
+
+             // Toast.makeText(this, idEmail, Toast.LENGTH_LONG).show();
              return true;
             case R.id.SignInEmail:
              Intent signInIntent = new Intent(MainActivity.this, GoogleInformations.class);
@@ -231,6 +240,46 @@ public class MainActivity extends AppCompatActivity {
         public void getEmailBack(){
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             idEmail = sharedPreferences.getString("Email", "no-id");
+        }
+
+        public Contact getListContacts(){
+           testRef = FirebaseDatabase.getInstance().getReference().child("Backup Restore").child("Contacts");
+                   // testRef = firebaseDatabase.getReference("Backup Restore").child("Contacts").child("1");
+            //testRef = firebaseDatabase.getReference("Backup Restore").child("Contacts").child("0");
+           final Contact contactFireBase = new Contact();
+            testRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                   //  Contact contactFireBase = dataSnapshot.getValue(Contact.class);
+                     // listContactsR.add(contactFireBase);
+
+                for(DataSnapshot contactDS : dataSnapshot.getChildren()){
+                    nameFromDb = dataSnapshot.child("name").getValue().toString();
+                    phoneFromDb = dataSnapshot.child("phone").getValue().toString();
+                    emailFromDb = dataSnapshot.child("email").getValue().toString();
+                }
+
+                    contactFireBase.setName(nameFromDb);
+                    contactFireBase.setEmail(emailFromDb);
+                    contactFireBase.setPhone(phoneFromDb);
+//
+                    //     listContactsR.add(contactFireBase);
+
+                   //  ContactFragment contactFragment = new ContactFragment(listContactsR);
+
+
+                //    emailFromDB = dataSnapshot.child("Email").getValue().toString();
+
+                 //   Toast.makeText(getBaseContext(), listContactsR.get(0).getName(), Toast.LENGTH_LONG).show();
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        return contactFireBase;
         }
         public void testFireBaseDatabase(){
             dataContact = AllContacts();
@@ -265,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
 
                        // Toast.makeText(getBaseContext(), ourSms.getNumero(), Toast.LENGTH_LONG).show();
 
-                       testRef.push().child("Messages").child(String.valueOf(j)).setValue(ourSms);
+                       testRef.child("Messages").child(String.valueOf(j)).setValue(ourSms);
 
                     }
                  }
