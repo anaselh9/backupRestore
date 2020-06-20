@@ -49,7 +49,8 @@ public class GoogleInformations extends AppCompatActivity {
             emailView.setText(personEmail);
             database = FirebaseDatabase.getInstance();
             ref = database.getReference();
-            ref.child("Email").setValue(emailView.getText().toString());
+            ref.child("email").setValue(emailView.getText().toString());
+            //ref.child("email").setValue(emailView.getText().toString());
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor editor = sharedPreferences.edit();

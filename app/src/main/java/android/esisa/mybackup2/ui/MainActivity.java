@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private int RC_SIGN_IN = 0;
     private GoogleSignInClient mGoogleSignInClient;
     private GoogleInformations googleInformations;
-    private String idEmail;
+    private String idEmail, emailCheck;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference testRef;
     private  String nameContact, phoneContact, emailContact;
@@ -84,17 +84,20 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Sms> sms= new ArrayList<>();
     private ContactDao contactDao;
     private SmsDao smsDao;
-    ProgressBar progressBar;
+   // ProgressBar progressBar;
 
 
     //Section Code : Retriving Data
 
     public ArrayList<Contact> listContactsR = new ArrayList<>();
     public ArrayList<Contact> listFromFBase = new ArrayList<>();
-    private ArrayList<Sms> listSmsR;
-    private  String emailFromDB,nameFromDb,phoneFromDb,emailFromDb;
+    public ArrayList<Sms> listSmsR = new ArrayList<>();
+    public ArrayList<Sms> listSmsFromFBase = new ArrayList<>();
+
     public Contact contactFireBase;
+    public Sms smsFireBase;
     Contact myContact;
+    Sms mySms;
 
 
 
@@ -106,14 +109,14 @@ public class MainActivity extends AppCompatActivity {
         listView1 = findViewById(R.id.listView1);
         listView2= findViewById(R.id.listView2);
         signInButton = findViewById(R.id.sign_in_button);
-        progressBar = findViewById(R.id.progressBar);
+        //progressBar = findViewById(R.id.progressBar);
 
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 switch (view.getId()) {
                     case R.id.sign_in_button:
-                        signIn();
+                       signIn();
                         break;
                 }
             }
@@ -214,11 +217,15 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.Backup:
                 getEmailBack();
-                testFireBaseDatabase();
+                if(checkEmailFirst() == true){
+                    testFireBaseDatabase();
+                }
+
 
                 return true;
             case R.id.Restore:
                 listFromFBase = getListContacts();
+                listSmsFromFBase = getListSms();
 
                if(pos == 1){
                    getSupportFragmentManager().beginTransaction()
@@ -226,7 +233,12 @@ public class MainActivity extends AppCompatActivity {
                            .commitNow();
                    Toast.makeText(MainActivity.this, "Selected Position" + pos, Toast.LENGTH_SHORT).show();
 
-            }
+            }else if(pos ==2 ){
+                   getSupportFragmentManager().beginTransaction()
+                           .replace(R.id.Frame, new SmsFragment(listSmsFromFBase))
+                           .commitNow();
+                   Toast.makeText(MainActivity.this, "Selected Position" + pos, Toast.LENGTH_SHORT).show();
+               }
 
 
 
@@ -244,32 +256,72 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             idEmail = sharedPreferences.getString("Email", "no-id");
         }
-
-        public ArrayList<Contact> getListContacts(){
-           testRef = FirebaseDatabase.getInstance().getReference().child("BAckup Restore").child("Contacts");
-                   // testRef = firebaseDatabase.getReference("Backup Restore").child("Contacts").child("1");
-            //testRef = firebaseDatabase.getReference("Backup Restore").child("Contacts").child("0");
-           //  listContactsR = new ArrayList<>();
+        public boolean checkEmailFirst(){
+            testRef = FirebaseDatabase.getInstance().getReference().child("email");
             testRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                   //  Contact contactFireBase = dataSnapshot.getValue(Contact.class);
-                     // listContactsR.add(contactFireBase);
-                   // listContactsR =new ArrayList<>();
+                    String emailCheckFromFireBase = dataSnapshot.getValue(String.class);
+                    emailCheck = emailCheckFromFireBase;
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+            if(emailCheck != null){
+                return true;
+            }else
+            {
+                Toast.makeText(this,"Error, please try to login firt to save your data", Toast.LENGTH_LONG).show();
+                return false;
+
+            }
+
+
+        }
+        public ArrayList<Sms> getListSms(){
+            testRef = FirebaseDatabase.getInstance().getReference().child("BACKUP RESTOR").child("Messages");
+            testRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    listSmsR.clear();
+                    for (DataSnapshot smsDS : dataSnapshot.getChildren()){
+                        mySms = smsDS.getValue(Sms.class);
+                        smsFireBase = new Sms();
+
+                        smsFireBase.setNumero(mySms.getNumero());
+                        smsFireBase.setContenu(mySms.getContenu());
+
+                        listSmsR.add(smsFireBase);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        return listSmsR;
+        }
+        public ArrayList<Contact> getListContacts(){
+           testRef = FirebaseDatabase.getInstance().getReference().child("BACKUP RESTOR").child("Contacts");
+            testRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     listContactsR.clear();
                 for(DataSnapshot contactDS : dataSnapshot.getChildren()){
                      myContact = contactDS.getValue(Contact.class);
                     contactFireBase = new Contact();
-//                    nameFromDb = myContact.getName();
-//                    phoneFromDb = myContact.getPhone();
-//                    emailFromDb = myContact.getEmail();
 
                     contactFireBase.setName(myContact.getName());
                     contactFireBase.setEmail(myContact.getEmail());
                     contactFireBase.setPhone(myContact.getPhone());
 
                     listContactsR.add(contactFireBase);
-
                 }
                 }
 
@@ -279,11 +331,13 @@ public class MainActivity extends AppCompatActivity {
             });
             return listContactsR;
         }
+
+
         public void testFireBaseDatabase(){
             dataContact = AllContacts();
             dataSms = AllSms();
             firebaseDatabase = FirebaseDatabase.getInstance();
-            testRef = firebaseDatabase.getReference().child("BAckup Restore");
+            testRef = firebaseDatabase.getReference().child("BACKUP RESTOR");
             testRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
